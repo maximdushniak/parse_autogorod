@@ -102,4 +102,4 @@ if len(res_list) > 0:
     print('-------------------------------------')
     print('End!!!')
 
-input('Нажмите любую клавишу..')
+input('Press any key..')
