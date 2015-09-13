@@ -1,6 +1,7 @@
 import requests
 import lxml.html
 import csv
+import sys
 
 
 def get_params(art):
@@ -88,7 +89,11 @@ def search_article(art, mark=''):
 
 res_list = []
 
-with open('search.txt', newline='') as csvfile:
+filename = 'search.txt'
+if len (sys.argv) > 1:
+    filename = sys.argv[1]
+
+with open(filename, newline='') as csvfile:
     reader = csv.reader(csvfile, dialect = 'excel', delimiter='\t')
     for row in reader:
         print('Parse:', row)
