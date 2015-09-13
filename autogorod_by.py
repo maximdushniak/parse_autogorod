@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import requests
-import lxml.html
 import csv
 import sys
+
+import requests
+import lxml.html
 
 
 def get_params(art):
@@ -27,31 +28,33 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
     for row in doc.xpath(
             './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):  # Строки таблицы с результами
+        try:
+            place = row.xpath(
+                'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
+                0].text_content().strip()
 
-        place = row.xpath(
-            'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
-            0].text_content().strip()
+            if place.upper() == 'ПОД ЗАКАЗ': continue
 
-        if place.upper() == 'ПОД ЗАКАЗ': continue
+            brend = row.xpath(
+                'td[normalize-space(@class)="th-td-result-brand cell td-color2"]/span|td[normalize-space(@class)="th-td-result-brand td-color"]/span')[
+                0].text_content().strip()
+            art = row.xpath(
+                'td[normalize-space(@class)="th-td-result-article td-color"]/span/span/b|td[normalize-space(@class)="th-td-result-article cell td-color2"]/span/span/b')[
+                0].text_content().strip()
+            descr = row.xpath(
+                'td[normalize-space(@class)="th-td-result-descr cell td-color2"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]|td[normalize-space(@class)="th-td-result-descr td-color"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]')[
+                0].text_content().strip()
 
-        brend = row.xpath(
-            'td[normalize-space(@class)="th-td-result-brand cell td-color2"]/span|td[normalize-space(@class)="th-td-result-brand td-color"]/span')[
-            0].text_content().strip()
-        art = row.xpath(
-            'td[normalize-space(@class)="th-td-result-article td-color"]/span/span/b|td[normalize-space(@class)="th-td-result-article cell td-color2"]/span/span/b')[
-            0].text_content().strip()
-        descr = row.xpath(
-            'td[normalize-space(@class)="th-td-result-descr cell td-color2"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]|td[normalize-space(@class)="th-td-result-descr td-color"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]')[
-            0].text_content().strip()
+            price = row.xpath(
+                'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[
+                0]
+            price_value = price.xpath('span[@itemprop="offers"]')[0].text_content().strip()
 
-        price = row.xpath(
-            'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[
-            0]
-        price_value = price.xpath('span[@itemprop="offers"]')[0].text_content().strip()
+            # price_curency = price.xpath('meta')
 
-        # price_curency = price.xpath('meta')
-
-        d.append([searchmark, searchart, brend, art, descr, place, price_value])
+            d.append([searchmark, searchart, brend, art, descr, place, price_value])
+        except:
+            pass
 
     return d
 
