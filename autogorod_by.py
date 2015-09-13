@@ -7,7 +7,7 @@ import sys
 
 
 def get_params(art):
-    params = {'article': art, 'time': 'false', 'ajax': 'true', 'sort': 'article'}
+    params = dict(article=art, time='false', ajax='true', sort='article')
 
     return params
 
@@ -23,11 +23,10 @@ def get_headers():
 
 
 def parse_result_table(doc, searchart='', searchmark=''):
-
     d = []
 
     for row in doc.xpath(
-        './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):  # Строки таблицы с результами
+            './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):  # Строки таблицы с результами
 
         place = row.xpath(
             'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
@@ -46,7 +45,8 @@ def parse_result_table(doc, searchart='', searchmark=''):
             0].text_content().strip()
 
         price = row.xpath(
-            'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[0]
+            'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[
+            0]
         price_value = price.xpath('span[@itemprop="offers"]')[0].text_content().strip()
 
         # price_curency = price.xpath('meta')
@@ -54,7 +54,7 @@ def parse_result_table(doc, searchart='', searchmark=''):
         d.append([searchmark, searchart, brend, art, descr, place, price_value])
 
     if len(d) > 0:
-        d = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена']] +d
+        d = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена']] + d
 
     return d
 
@@ -74,23 +74,22 @@ def search_article(art, mark=''):
     d = []
     aaa = doc.xpath('.//div/div/table/tr/td/h1[@class="uppercase"]')
 
-    b = []
-
     if len(aaa) == 1:
         if aaa[0].text_content().strip().upper() == 'Производители'.upper():
             for table in doc.find_class('details-list filterResultTable set-search-grid xsmalls'):
                 for tr in table.find_class('cursor'):
-                     if mark.upper() in tr[1].text_content().upper():
-                         search_url = url + tr[3][0].get('href')
-                         r = requests.get(search_url, headers=headers, params=params)
-                         doc = lxml.html.document_fromstring(r.text)
+                    if mark.upper() in tr[1].text_content().upper():
+                        search_url = url + tr[3][0].get('href')
+                        r = requests.get(search_url, headers=headers, params=params)
+                        doc = lxml.html.document_fromstring(r.text)
 
-                     d += parse_result_table(doc, art, mark)
+                    d += parse_result_table(doc, art, mark)
 
         else:
-           d += parse_result_table(doc, art, mark)
+            d += parse_result_table(doc, art, mark)
 
     return d
+
 
 res_list = []
 
@@ -98,12 +97,12 @@ for i in sys.argv:
     print(i)
 
 filename = 'search.txt'
-if len (sys.argv) > 1:
+if len(sys.argv) > 1:
     filename = sys.argv[1]
 
 with open(filename, newline='') as csvfile:
     print('Read file: ' + filename)
-    reader = csv.reader(csvfile, dialect = 'excel', delimiter='\t')
+    reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
     for row in reader:
         print('Parse:', row)
         art = row[0]
