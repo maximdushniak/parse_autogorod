@@ -53,7 +53,7 @@ def parse_result_table(doc, searchart='', searchmark=''):
     return d
 
 
-def search_article(art, mark):
+def search_article(art, mark=''):
     url = 'http://avtogorod.by'
     search_url = url + '/search/artlookup/'
 
@@ -92,8 +92,13 @@ with open('search.txt', newline='') as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
         l = row[0].split()
-        print(l)
-        res_list += search_article(l[0], l[1])
+        print('Parse:', l)
+        art = l[0]
+        mark = ''
+        if len(l) == 2:
+            mark = l[1]
+
+        res_list += search_article(art, mark)
 
 if len(res_list) > 0:
     result_file = open("result_file.csv", 'w', newline='')
