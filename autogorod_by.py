@@ -53,9 +53,6 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
         d.append([searchmark, searchart, brend, art, descr, place, price_value])
 
-    if len(d) > 0:
-        d = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена']] + d
-
     return d
 
 
@@ -110,6 +107,9 @@ with open(filename, newline='') as csvfile:
         res_list += search_article(art, mark)
 
 if len(res_list) > 0:
+    res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение',
+                 'Цена']] + res_list
+
     result_file = open("result_file.csv", 'w', newline='')
     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
