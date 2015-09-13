@@ -1,4 +1,5 @@
-from builtins import print
+#!/usr/bin/env python
+
 import requests
 import lxml.html
 import csv
@@ -53,7 +54,7 @@ def parse_result_table(doc, searchart='', searchmark=''):
         d.append([searchmark, searchart, brend, art, descr, place, price_value])
 
     if len(d) > 0:
-        d.insert(['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена'], 0)
+        d = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена']] +d
 
     return d
 
