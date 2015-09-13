@@ -89,14 +89,13 @@ def search_article(art, mark=''):
 res_list = []
 
 with open('search.txt', newline='') as csvfile:
-    reader = csv.reader(csvfile)
+    reader = csv.reader(csvfile, dialect = 'excel', delimiter='\t')
     for row in reader:
-        l = row[0].split()
-        print('Parse:', l)
-        art = l[0]
+        print('Parse:', row)
+        art = row[0]
         mark = ''
-        if len(l) == 2:
-            mark = l[1]
+        if len(row) == 2:
+            mark = row[1]
 
         res_list += search_article(art, mark)
 
