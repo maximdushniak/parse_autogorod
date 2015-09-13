@@ -26,6 +26,12 @@ def parse_result_table(doc, searchart='', searchmark=''):
     for row in doc.xpath(
         './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):  # Строки таблицы с результами
 
+        place = row.xpath(
+            'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
+            0].text_content().strip()
+
+        if place.upper() == 'ПОД ЗАКАЗ': continue
+
         brend = row.xpath(
             'td[normalize-space(@class)="th-td-result-brand cell td-color2"]/span|td[normalize-space(@class)="th-td-result-brand td-color"]/span')[
             0].text_content().strip()
@@ -35,11 +41,6 @@ def parse_result_table(doc, searchart='', searchmark=''):
         descr = row.xpath(
             'td[normalize-space(@class)="th-td-result-descr cell td-color2"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]|td[normalize-space(@class)="th-td-result-descr td-color"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]')[
             0].text_content().strip()
-        place = row.xpath(
-            'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
-            0].text_content().strip()
-
-        if place.upper() == 'ПОД ЗАКАЗ': continue
 
         price = row.xpath(
             'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[0]
