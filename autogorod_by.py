@@ -1,3 +1,4 @@
+from builtins import print
 import requests
 import lxml.html
 import csv
@@ -51,6 +52,9 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
         d.append([searchmark, searchart, brend, art, descr, place, price_value])
 
+    if len(d) > 0:
+        d.insert(['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направоение', 'Цена'], 0)
+
     return d
 
 
@@ -97,6 +101,7 @@ if len (sys.argv) > 1:
     filename = sys.argv[1]
 
 with open(filename, newline='') as csvfile:
+    print('Read file: ' + filename)
     reader = csv.reader(csvfile, dialect = 'excel', delimiter='\t')
     for row in reader:
         print('Parse:', row)
