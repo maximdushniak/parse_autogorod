@@ -93,9 +93,6 @@ def search_article(art, mark=''):
 
 res_list = []
 
-for i in sys.argv:
-    print(i)
-
 filename = 'search.txt'
 if len(sys.argv) > 1:
     filename = sys.argv[1]
