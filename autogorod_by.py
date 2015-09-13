@@ -101,10 +101,10 @@ with open('search.txt', newline='') as csvfile:
 
 if len(res_list) > 0:
     result_file = open("result_file.csv", 'w', newline='')
-    wr = csv.writer(result_file, quoting=csv.QUOTE_ALL)
+    wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
     wr.writerows(res_list)
     print('-------------------------------------')
-    print('End!!!')
+    print('File safe in: ', result_file.name)
 
 input('Press any key..')
