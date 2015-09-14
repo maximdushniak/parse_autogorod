@@ -8,6 +8,9 @@ import requests
 import lxml.html
 
 
+def get_proxies():
+    return {'http': '108.162.197.97:80'}
+
 def get_params(art):
     params = dict(article=art, time='false', ajax='true', sort='article')
 
@@ -66,8 +69,9 @@ def search_article(art, mark=''):
 
     headers = get_headers()
     params = get_params(art)
+    proxies = get_proxies()
 
-    r = requests.get(search_url, headers=headers, params=params)
+    r = requests.get(search_url, headers=headers, params=params, proxies = proxies)
 
     # Парсим, если есть аналоги
     doc = lxml.html.document_fromstring(r.text)
@@ -81,7 +85,7 @@ def search_article(art, mark=''):
                 for tr in table.find_class('cursor'):
                     if mark.upper() in tr[1].text_content().strip().upper():
                         search_url = url + tr[3][0].get('href')
-                        r = requests.get(search_url, headers=headers, params=params)
+                        r = requests.get(search_url, headers=headers, params=params, proxies = proxies)
                         doc = lxml.html.document_fromstring(r.text)
 
                     d += parse_result_table(doc, art, mark)
@@ -106,7 +110,9 @@ if len(sys.argv) > 1:
 with open(filename, newline='') as csvfile:
     print('Read file: ' + filename)
     reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
+    # n = 0
     for row in reader:
+        # n += 1
         print('Parse:', row)
         art = row[0].strip()
         mark = ''
