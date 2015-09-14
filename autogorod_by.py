@@ -78,7 +78,7 @@ def search_article(art, mark=''):
         if aaa[0].text_content().strip().upper() == 'Производители'.upper():
             for table in doc.find_class('details-list filterResultTable set-search-grid xsmalls'):
                 for tr in table.find_class('cursor'):
-                    if mark.upper() in tr[1].text_content().upper():
+                    if mark.upper() in tr[1].text_content().strip().upper():
                         search_url = url + tr[3][0].get('href')
                         r = requests.get(search_url, headers=headers, params=params)
                         doc = lxml.html.document_fromstring(r.text)
@@ -102,10 +102,10 @@ with open(filename, newline='') as csvfile:
     reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
     for row in reader:
         print('Parse:', row)
-        art = row[0]
+        art = row[0].strip()
         mark = ''
         if len(row) == 2:
-            mark = row[1]
+            mark = row[1].strip()
 
         res_list += search_article(art, mark)
 
