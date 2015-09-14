@@ -2,6 +2,7 @@
 
 import csv
 import sys
+import time
 
 import requests
 import lxml.html
@@ -91,6 +92,11 @@ def search_article(art, mark=''):
     return d
 
 
+start_datetime = time.time()
+
+print('Start:', time.ctime(start_datetime))
+print('-------------------------------------')
+
 res_list = []
 
 filename = 'search.txt'
@@ -117,7 +123,13 @@ if len(res_list) > 0:
     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
     wr.writerows(res_list)
-    print('-------------------------------------')
+
     print('File safe in: ', result_file.name)
 
+end_datetime = time.time()
+
+print('-------------------------------------')
+print('Finish:', time.ctime(end_datetime))
+print('Time:', (end_datetime-start_datetime), '(sec)')
+print('')
 input('Press any key..')
