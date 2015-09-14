@@ -9,10 +9,12 @@ import lxml.html
 
 
 def get_proxies():
-    return {'http': '108.162.197.97:80'}
+    # return {'http': '108.162.197.97:80'}
+    return {}
 
-def get_params(art):
-    params = dict(article=art, time='false', ajax='true', sort='article')
+
+def get_params(article):
+    params = dict(article=article, time='false', ajax='true', sort='article')
 
     return params
 
@@ -30,48 +32,49 @@ def get_headers():
 def parse_result_table(doc, searchart='', searchmark=''):
     d = []
 
-    for row in doc.xpath(
-            './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):  # Строки таблицы с результами
+    for tr in doc.xpath(
+            './/div/div/div[@id="ajax_analogs"]/table[@class="details-list filterResultTable xsmalls"]//tr[@class]'):
+        # Строки таблицы с результами
         try:
-            place = row.xpath(
+            place = tr.xpath(
                 'td[normalize-space(@class)="th-td-result-place cell td-color2"]|td[normalize-space(@class)="th-td-result-place td-color"]')[
                 0].text_content().strip()
 
             if place.upper() == 'ПОД ЗАКАЗ': continue
 
-            brend = row.xpath(
+            brend = tr.xpath(
                 'td[normalize-space(@class)="th-td-result-brand cell td-color2"]/span|td[normalize-space(@class)="th-td-result-brand td-color"]/span')[
                 0].text_content().strip()
-            art = row.xpath(
+            article = tr.xpath(
                 'td[normalize-space(@class)="th-td-result-article td-color"]/span/span/b|td[normalize-space(@class)="th-td-result-article cell td-color2"]/span/span/b')[
                 0].text_content().strip()
-            descr = row.xpath(
+            descr = tr.xpath(
                 'td[normalize-space(@class)="th-td-result-descr cell td-color2"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]|td[normalize-space(@class)="th-td-result-descr td-color"]/span[@class="artlook-descr"]/span[@class="descr-hide-overflow"]')[
                 0].text_content().strip()
 
-            price = row.xpath(
+            price = tr.xpath(
                 'td[normalize-space(@class)="th-td-result-price box-price-view cell td-color2"]|td[normalize-space(@class)="th-td-result-price box-price-view td-color"]')[
                 0]
             price_value = price.xpath('span[@itemprop="offers"]')[0].text_content().strip()
 
             # price_curency = price.xpath('meta')
 
-            d.append([searchmark, searchart, brend, art, descr, place, price_value])
+            d.append([searchmark, searchart, brend, article, descr, place, price_value])
         except:
             pass
 
     return d
 
 
-def search_article(art, mark=''):
+def search_article(article, brand=''):
     url = 'http://avtogorod.by'
     search_url = url + '/search/artlookup/'
 
     headers = get_headers()
-    params = get_params(art)
+    params = get_params(article)
     proxies = get_proxies()
 
-    r = requests.get(search_url, headers=headers, params=params, proxies = proxies)
+    r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
 
     # Парсим, если есть аналоги
     doc = lxml.html.document_fromstring(r.text)
@@ -83,15 +86,15 @@ def search_article(art, mark=''):
         if aaa[0].text_content().strip().upper() == 'Производители'.upper():
             for table in doc.find_class('details-list filterResultTable set-search-grid xsmalls'):
                 for tr in table.find_class('cursor'):
-                    if mark.upper() in tr[1].text_content().strip().upper():
+                    if brand.upper() in tr[1].text_content().strip().upper():
                         search_url = url + tr[3][0].get('href')
-                        r = requests.get(search_url, headers=headers, params=params, proxies = proxies)
+                        r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
                         doc = lxml.html.document_fromstring(r.text)
 
-                    d += parse_result_table(doc, art, mark)
+                    d += parse_result_table(doc, article, brand)
 
         else:
-            d += parse_result_table(doc, art, mark)
+            d += parse_result_table(doc, article, brand)
 
     return d
 
@@ -109,6 +112,7 @@ if len(sys.argv) > 1:
 
 with open(filename, newline='') as csvfile:
     print('Read file: ' + filename)
+    print('')
     reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
 
     rows = [row for row in reader]
@@ -116,7 +120,7 @@ with open(filename, newline='') as csvfile:
     n = 0
     for row in rows:
         n += 1
-        print('Parse:', row, round(100*n/len_row, 2),'%')
+        print('Parse:', row, round(100 * n / len_row, 2), '%')
         art = row[0].strip()
         mark = ''
         if len(row) == 2:
@@ -133,12 +137,19 @@ if len(res_list) > 0:
 
     wr.writerows(res_list)
 
-    print('File safe in: ', result_file.name)
+    result_file.close()
+    print('')
+    print('-------------------------------------')
+    print('File safe: ', result_file.name)
+else:
+    print('')
+    print('-------------------------------------')
+    print('Error: No data!!!')
 
 end_datetime = time.time()
 
 print('-------------------------------------')
 print('Finish:', time.ctime(end_datetime))
-print('Time:', (end_datetime-start_datetime), '(sec)')
+print('Time:', (end_datetime - start_datetime), '(sec)')
 print('')
 input('Press any key..')
