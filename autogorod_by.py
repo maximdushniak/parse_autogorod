@@ -110,10 +110,13 @@ if len(sys.argv) > 1:
 with open(filename, newline='') as csvfile:
     print('Read file: ' + filename)
     reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
-    # n = 0
-    for row in reader:
-        # n += 1
-        print('Parse:', row)
+
+    rows = [row for row in reader]
+    len_row = len(rows)
+    n = 0
+    for row in rows:
+        n += 1
+        print('Parse:', row, round(100*n/len_row, 2),'%')
         art = row[0].strip()
         mark = ''
         if len(row) == 2:
