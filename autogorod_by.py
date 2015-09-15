@@ -9,8 +9,8 @@ import lxml.html
 
 
 def get_proxies():
-    # return {'http': '108.162.197.97:80'}
-    return {}
+    return {'http': '94.23.59.45:3128'}
+    # return {}
 
 
 def get_params(article):
