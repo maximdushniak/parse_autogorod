@@ -135,7 +135,18 @@ if len(res_list) > 0:
     result_file = open("result_file.csv", 'w', newline='')
     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
-    wr.writerows(res_list)
+    print('')
+
+    len_list = len(res_list)
+
+    print('Result [' + len_list + '] row.')
+
+    n = 0
+    for element in res_list:
+        n += 1
+        print('Save:', round(100 * n / len_list, 2), '%')
+        wr.writerow(element)
+    # wr.writerows(res_list) # ошибка записи большого файла
 
     result_file.close()
     print('')
