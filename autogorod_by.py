@@ -132,7 +132,7 @@ if len(res_list) > 0:
     res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
                  'Цена']] + res_list
 
-    result_file = open("result_file.csv", 'w', newline='')
+    result_file = open('result_file.csv', 'w', newline='')
     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
     print('')
