@@ -143,11 +143,7 @@ if len(res_list) > 0:
 
     # n = 0
     for element in res_list:
-        # n += 1
-        # print('Save:', round(100 * n / len_list, 2), '%')
-        # print('')
         wr.writerow(element)
-    # wr.writerows(res_list) # ошибка записи большого файла
 
     result_file.close()
     print('')
