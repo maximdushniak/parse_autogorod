@@ -139,12 +139,13 @@ if len(res_list) > 0:
 
     len_list = len(res_list)
 
-    print('Result [' + len_list + '] row.')
+    print('Result [', len_list ,'] row. Saving.')
 
-    n = 0
+    # n = 0
     for element in res_list:
-        n += 1
-        print('Save:', round(100 * n / len_list, 2), '%')
+        # n += 1
+        # print('Save:', round(100 * n / len_list, 2), '%')
+        # print('')
         wr.writerow(element)
     # wr.writerows(res_list) # ошибка записи большого файла
 
@@ -161,6 +162,14 @@ end_datetime = time.time()
 
 print('-------------------------------------')
 print('Finish:', time.ctime(end_datetime))
-print('Time:', (end_datetime - start_datetime), '(sec)')
+
+duration = end_datetime - start_datetime
+
+duration_h = int(duration//(60*60))
+duration_m = int((duration-duration_h*60*60)//60)
+duration_s = int((duration - duration_h*60*60 - duration_m*60))
+
+print('Duration:', duration_h, 'h', duration_m, 'min', duration_s , 'sec')
 print('')
 input('Press any key..')
+
