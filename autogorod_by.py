@@ -141,7 +141,6 @@ if len(res_list) > 0:
 
     print('Result [', len_list ,'] row. Saving.')
 
-    # n = 0
     for element in res_list:
         wr.writerow(element)
 
