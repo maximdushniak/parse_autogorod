@@ -162,7 +162,14 @@ end_datetime = time.time()
 
 print('-------------------------------------')
 print('Finish:', time.ctime(end_datetime))
-print('Time:', (end_datetime - start_datetime), '(sec)')
+
+duration = end_datetime - start_datetime
+
+duration_h = int(duration//(60*60))
+duration_m = int((duration-duration_h*60*60)//60)
+duration_s = int((duration - duration_h*60*60 - duration_m*60))
+
+print('Duration:', duration_h, 'h', duration_m, 'min', duration_s , 'sec')
 print('')
 input('Press any key..')
 
