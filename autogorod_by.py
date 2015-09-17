@@ -9,7 +9,7 @@ import lxml.html
 
 
 def get_proxies():
-    return {'http': '94.23.59.45:3128'}
+    return {'http': '92.222.45.88:8888'}
     # return {}
 
 
@@ -74,12 +74,17 @@ def search_article(article, brand=''):
     params = get_params(article)
     proxies = get_proxies()
 
-    r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
+    d = []
+
+    try:
+        r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
+    except:
+        print("Request error. Article: ", article)
+        return d
 
     # Парсим, если есть аналоги
     doc = lxml.html.document_fromstring(r.text)
 
-    d = []
     aaa = doc.xpath('.//div/div/table/tr/td/h1[@class="uppercase"]')
 
     if len(aaa) == 1:
@@ -88,7 +93,10 @@ def search_article(article, brand=''):
                 for tr in table.find_class('cursor'):
                     if brand.upper() in tr[1].text_content().strip().upper():
                         search_url = url + tr[3][0].get('href')
-                        r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
+                        try:
+                            r = requests.get(search_url, headers=headers, params=params, proxies=proxies)
+                        except:
+                            return d
                         doc = lxml.html.document_fromstring(r.text)
 
                     d += parse_result_table(doc, article, brand)
@@ -120,13 +128,17 @@ with open(filename, newline='') as csvfile:
     n = 0
     for row in rows:
         n += 1
-        print('Parse:', row, round(100 * n / len_row, 2), '%')
+        percent = round(100 * n / len_row, 2)
+        print('Parse:', row, percent, '%', end=' ')
+
+        # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
         art = row[0].strip()
         mark = ''
         if len(row) == 2:
             mark = row[1].strip()
-
-        res_list += search_article(art, mark)
+        art_list = search_article(art, mark)
+        print('row:', len(art_list))
+        res_list += art_list
 
 if len(res_list) > 0:
     res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
