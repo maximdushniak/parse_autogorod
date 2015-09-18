@@ -139,7 +139,6 @@ with open(filename, newline='') as csvfile:
     for row in rows:
         n += 1
         percent = round(100 * n / len_row, 2)
-        print('Parse:', row, percent, '%', end=' ')
 
         # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
         art = normalize_string(row[0])
@@ -150,6 +149,8 @@ with open(filename, newline='') as csvfile:
             art_list = search_article(art, mark)
         except:
             print('Error parse', art)
+
+        print('Parse:', [art, mark], percent, '%', end=' ')
         print('row:', len(art_list))
         res_list += art_list
 
