@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import csv
 import sys
 import time
@@ -59,7 +60,9 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
             # price_curency = price.xpath('meta')
 
-            d.append([searchmark, searchart, brend, article, descr, place, price_value])
+            res_l = [searchmark, searchart, brend, article, descr, place, price_value]
+
+            d.append([normalize_string(i, '[a-zA-Z0-9 ]') for i in res_l])
         except:
             pass
 
@@ -107,6 +110,13 @@ def search_article(article, brand=''):
     return d
 
 
+def normalize_string(str, pattern='[a-zA-Z0-9]'):
+
+    p = re.compile(pattern)
+    l = p.findall(str)
+    return ''.join(l)
+
+
 start_datetime = time.time()
 
 print('Start:', time.ctime(start_datetime))
@@ -132,10 +142,10 @@ with open(filename, newline='') as csvfile:
         print('Parse:', row, percent, '%', end=' ')
 
         # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
-        art = row[0].strip()
+        art = normalize_string(row[0])
         mark = ''
         if len(row) == 2:
-            mark = row[1].strip()
+            mark = normalize_string(row[1])
         try:
             art_list = search_article(art, mark)
         except:
