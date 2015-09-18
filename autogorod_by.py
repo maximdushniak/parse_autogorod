@@ -10,7 +10,7 @@ import lxml.html
 
 def get_proxies():
     return {'http': '92.222.45.88:8888'}
-    # return {}
+    #return {}
 
 
 def get_params(article):
@@ -136,7 +136,10 @@ with open(filename, newline='') as csvfile:
         mark = ''
         if len(row) == 2:
             mark = row[1].strip()
-        art_list = search_article(art, mark)
+        try:
+            art_list = search_article(art, mark)
+        except:
+            print('Error parse', art)
         print('row:', len(art_list))
         res_list += art_list
 
@@ -154,7 +157,10 @@ if len(res_list) > 0:
     print('Result [', len_list ,'] row. Saving.')
 
     for element in res_list:
-        wr.writerow(element)
+        try:
+            wr.writerow(element)
+        except:
+            print('Error write', element)
 
     result_file.close()
     print('')
