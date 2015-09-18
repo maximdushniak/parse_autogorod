@@ -62,7 +62,7 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
             res_l = [searchmark, searchart, brend, article, descr, place, price_value]
 
-            d.append([normalize_string(i, '[a-zA-Z0-9 ]') for i in res_l])
+            d.append([normalize_string(i, '[a-zA-Zа-яА-я0-9 ]') for i in res_l])
         except:
             pass
 
@@ -112,6 +112,12 @@ def search_article(article, brand=''):
 
 def normalize_string(str, pattern='[a-zA-Z0-9]'):
 
+    """
+
+    :param str:
+    :param pattern:
+    :return:
+    """
     p = re.compile(pattern)
     l = p.findall(str)
     return ''.join(l)
@@ -145,6 +151,8 @@ with open(filename, newline='') as csvfile:
         mark = ''
         if len(row) == 2:
             mark = normalize_string(row[1])
+
+        art_list = []
         try:
             art_list = search_article(art, mark)
         except:
