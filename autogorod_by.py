@@ -126,7 +126,7 @@ def get_listfromfile(filename):
         return rows
 
 
-def saveResultFromList(res_list=[]):
+def saveResultFromList(res_list=[], result_filename='result_file.csv'):
     if len(res_list) > 0:
         res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
                      'Цена']] + res_list
@@ -156,14 +156,16 @@ def saveResultFromList(res_list=[]):
         print('Error: No data!!!')
 
 
-
-
 filename = 'search.txt'
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 result_filename = 'resultfile.csv'
 if len(sys.argv) > 2:
-    filename = sys.argv[2]
+    result_filename = sys.argv[2]
+
+print(filename, result_filename)
+exit()
+
 
 if __name__ == '__main__':
     start_datetime = time.time()
@@ -174,11 +176,14 @@ if __name__ == '__main__':
     res_list = []
 
     rows = get_listfromfile(filename)
+
     len_row = len(rows)
+
     n = 0
     for row in rows:
 
         n += 1
+        percent = round(100 * n / len_row, 2)
         art = row[0]
         mark = row[1]
 
@@ -187,43 +192,11 @@ if __name__ == '__main__':
         except:
             print('Error parse', art)
 
-        percent = round(100 * n / len_row, 2)
-
         print('Parse:', [art, mark], percent, '%', end=' ')
         print('row:', len(art_list))
         res_list += art_list
 
-    saveResultFromList(res_list)
-
-    # if len(res_list) > 0:
-    #     res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
-    #                  'Цена']] + res_list
-    #
-    #     result_file = open(result_filename, 'w', newline='')
-    #     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
-    #
-    #     print('')
-    #
-    #     len_list = len(res_list)
-    #
-    #     print('Result [', len_list ,'] row. Saving.')
-    #
-    #     for element in res_list:
-    #         try:
-    #             wr.writerow(element)
-    #         except:
-    #             print('Error write', element)
-    #
-    #     result_file.close()
-    #     print('')
-    #     print('-------------------------------------')
-    #     print('File safe: ', result_file.name)
-    # else:
-    #     print('')
-    #     print('-------------------------------------')
-    #     print('Error: No data!!!')
-    #
-    # end_datetime = time.time()
+    saveResultFromList(res_list, result_filename)
 
     end_datetime = time.time()
     print('-------------------------------------')
