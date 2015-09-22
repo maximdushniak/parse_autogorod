@@ -110,63 +110,28 @@ def search_article(article, brand=''):
     return d
 
 
-def normalize_string(str, pattern='[a-zA-Z0-9]'):
-
-    """
-
-    :param str:
-    :param pattern:
-    :return:
-    """
+def normalize_string(str='', pattern='[a-zA-Z0-9 /-]'):
+    str = str.strip().upper()
     p = re.compile(pattern)
     l = p.findall(str)
     return ''.join(l)
 
-if __name__ == '__main__':
-    start_datetime = time.time()
 
-    print('Start:', time.ctime(start_datetime))
-    print('-------------------------------------')
-
-    res_list = []
-
-    filename = 'search.txt'
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-
+def get_listfromfile(filename):
     with open(filename, newline='') as csvfile:
-        print('Read file: ' + filename)
-        print('')
         reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
 
-        rows = [row for row in reader]
-        len_row = len(rows)
-        n = 0
-        for row in rows:
-            n += 1
-            percent = round(100 * n / len_row, 2)
+        rows = [[normalize_string(column) for column in row] for row in reader]
 
-            # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
-            art = normalize_string(row[0])
-            mark = ''
-            if len(row) == 2:
-                mark = normalize_string(row[1])
+        return rows
 
-            art_list = []
-            try:
-                art_list = search_article(art, mark)
-            except:
-                print('Error parse', art)
 
-            print('Parse:', [art, mark], percent, '%', end=' ')
-            print('row:', len(art_list))
-            res_list += art_list
-
+def saveResultFromList(res_list=[]):
     if len(res_list) > 0:
         res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
                      'Цена']] + res_list
 
-        result_file = open('result_file.csv', 'w', newline='')
+        result_file = open(result_filename, 'w', newline='')
         wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
 
         print('')
@@ -190,8 +155,77 @@ if __name__ == '__main__':
         print('-------------------------------------')
         print('Error: No data!!!')
 
-    end_datetime = time.time()
 
+
+
+filename = 'search.txt'
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+result_filename = 'resultfile.csv'
+if len(sys.argv) > 2:
+    filename = sys.argv[2]
+
+if __name__ == '__main__':
+    start_datetime = time.time()
+
+    print('Start:', time.ctime(start_datetime))
+    print('-'*37)
+
+    res_list = []
+
+    rows = get_listfromfile(filename)
+    len_row = len(rows)
+    n = 0
+    for row in rows:
+
+        n += 1
+        art = row[0]
+        mark = row[1]
+
+        try:
+            art_list = search_article(art, mark)
+        except:
+            print('Error parse', art)
+
+        percent = round(100 * n / len_row, 2)
+
+        print('Parse:', [art, mark], percent, '%', end=' ')
+        print('row:', len(art_list))
+        res_list += art_list
+
+    saveResultFromList(res_list)
+
+    # if len(res_list) > 0:
+    #     res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
+    #                  'Цена']] + res_list
+    #
+    #     result_file = open(result_filename, 'w', newline='')
+    #     wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
+    #
+    #     print('')
+    #
+    #     len_list = len(res_list)
+    #
+    #     print('Result [', len_list ,'] row. Saving.')
+    #
+    #     for element in res_list:
+    #         try:
+    #             wr.writerow(element)
+    #         except:
+    #             print('Error write', element)
+    #
+    #     result_file.close()
+    #     print('')
+    #     print('-------------------------------------')
+    #     print('File safe: ', result_file.name)
+    # else:
+    #     print('')
+    #     print('-------------------------------------')
+    #     print('Error: No data!!!')
+    #
+    # end_datetime = time.time()
+
+    end_datetime = time.time()
     print('-------------------------------------')
     print('Finish:', time.ctime(end_datetime))
 
