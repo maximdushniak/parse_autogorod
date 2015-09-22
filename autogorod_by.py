@@ -62,7 +62,7 @@ def parse_result_table(doc, searchart='', searchmark=''):
 
             res_l = [searchmark, searchart, brend, article, descr, place, price_value]
 
-            d.append([normalize_string(i, '[a-zA-Zа-яА-я0-9 ]') for i in res_l])
+            d.append([normalize_string(i, '[a-zA-Zа-яА-я0-9 -/]') for i in res_l])
         except:
             pass
 
@@ -111,7 +111,7 @@ def search_article(article, brand=''):
 
 
 def normalize_string(str='', pattern='[a-zA-Z0-9 /-]'):
-    str = str.strip().upper()
+    str = str.strip()
     p = re.compile(pattern)
     l = p.findall(str)
     return ''.join(l)
@@ -121,7 +121,7 @@ def get_listfromfile(filename):
     with open(filename, newline='') as csvfile:
         reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
 
-        rows = [[normalize_string(column) for column in row] for row in reader]
+        rows = [[normalize_string(column).upper() for column in row] for row in reader]
 
         return rows
 
@@ -163,10 +163,6 @@ result_filename = 'resultfile.csv'
 if len(sys.argv) > 2:
     result_filename = sys.argv[2]
 
-print(filename, result_filename)
-exit()
-
-
 if __name__ == '__main__':
     start_datetime = time.time()
 
@@ -187,13 +183,18 @@ if __name__ == '__main__':
         art = row[0]
         mark = row[1]
 
+        art_list = []
         try:
             art_list = search_article(art, mark)
         except:
             print('Error parse', art)
 
-        print('Parse:', [art, mark], percent, '%', end=' ')
-        print('row:', len(art_list))
+        # print('Parse:', [art, mark], percent, '%', end=' ')
+        # print('row:', len(art_list))
+
+        s = 'Parse art [ %20s] mark [ %10s] %06.2f%% %d rows'
+        print(s % (art, mark, percent, len(art_list)))
+
         res_list += art_list
 
     saveResultFromList(res_list, result_filename)
