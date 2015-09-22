@@ -122,86 +122,85 @@ def normalize_string(str, pattern='[a-zA-Z0-9]'):
     l = p.findall(str)
     return ''.join(l)
 
+if __name__ == '__main__':
+    start_datetime = time.time()
 
-start_datetime = time.time()
-
-print('Start:', time.ctime(start_datetime))
-print('-------------------------------------')
-
-res_list = []
-
-filename = 'search.txt'
-if len(sys.argv) > 1:
-    filename = sys.argv[1]
-
-with open(filename, newline='') as csvfile:
-    print('Read file: ' + filename)
-    print('')
-    reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
-
-    rows = [row for row in reader]
-    len_row = len(rows)
-    n = 0
-    for row in rows:
-        n += 1
-        percent = round(100 * n / len_row, 2)
-
-        # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
-        art = normalize_string(row[0])
-        mark = ''
-        if len(row) == 2:
-            mark = normalize_string(row[1])
-
-        art_list = []
-        try:
-            art_list = search_article(art, mark)
-        except:
-            print('Error parse', art)
-
-        print('Parse:', [art, mark], percent, '%', end=' ')
-        print('row:', len(art_list))
-        res_list += art_list
-
-if len(res_list) > 0:
-    res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
-                 'Цена']] + res_list
-
-    result_file = open('result_file.csv', 'w', newline='')
-    wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
-
-    print('')
-
-    len_list = len(res_list)
-
-    print('Result [', len_list ,'] row. Saving.')
-
-    for element in res_list:
-        try:
-            wr.writerow(element)
-        except:
-            print('Error write', element)
-
-    result_file.close()
-    print('')
+    print('Start:', time.ctime(start_datetime))
     print('-------------------------------------')
-    print('File safe: ', result_file.name)
-else:
-    print('')
+
+    res_list = []
+
+    filename = 'search.txt'
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+
+    with open(filename, newline='') as csvfile:
+        print('Read file: ' + filename)
+        print('')
+        reader = csv.reader(csvfile, dialect='excel', delimiter='\t')
+
+        rows = [row for row in reader]
+        len_row = len(rows)
+        n = 0
+        for row in rows:
+            n += 1
+            percent = round(100 * n / len_row, 2)
+
+            # print(['Parse:', row, round(100 * n / len_row, 2), '%'])
+            art = normalize_string(row[0])
+            mark = ''
+            if len(row) == 2:
+                mark = normalize_string(row[1])
+
+            art_list = []
+            try:
+                art_list = search_article(art, mark)
+            except:
+                print('Error parse', art)
+
+            print('Parse:', [art, mark], percent, '%', end=' ')
+            print('row:', len(art_list))
+            res_list += art_list
+
+    if len(res_list) > 0:
+        res_list = [['Искомый бренд', 'Искомый артикул', 'Бренд', 'Артикул', 'Наименование', 'Направление',
+                     'Цена']] + res_list
+
+        result_file = open('result_file.csv', 'w', newline='')
+        wr = csv.writer(result_file, quoting=csv.QUOTE_ALL, delimiter=';')
+
+        print('')
+
+        len_list = len(res_list)
+
+        print('Result [', len_list ,'] row. Saving.')
+
+        for element in res_list:
+            try:
+                wr.writerow(element)
+            except:
+                print('Error write', element)
+
+        result_file.close()
+        print('')
+        print('-------------------------------------')
+        print('File safe: ', result_file.name)
+    else:
+        print('')
+        print('-------------------------------------')
+        print('Error: No data!!!')
+
+    end_datetime = time.time()
+
     print('-------------------------------------')
-    print('Error: No data!!!')
+    print('Finish:', time.ctime(end_datetime))
 
-end_datetime = time.time()
+    duration = end_datetime - start_datetime
 
-print('-------------------------------------')
-print('Finish:', time.ctime(end_datetime))
+    duration_h = int(duration//(60*60))
+    duration_m = int((duration-duration_h*60*60)//60)
+    duration_s = int((duration - duration_h*60*60 - duration_m*60))
 
-duration = end_datetime - start_datetime
-
-duration_h = int(duration//(60*60))
-duration_m = int((duration-duration_h*60*60)//60)
-duration_s = int((duration - duration_h*60*60 - duration_m*60))
-
-print('Duration:', duration_h, 'h', duration_m, 'min', duration_s , 'sec')
-print('')
-input('Press any key..')
-
+    print('Duration:', duration_h, 'h', duration_m, 'min', duration_s , 'sec')
+    print('')
+    input('Press any key..')
