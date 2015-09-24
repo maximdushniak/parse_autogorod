@@ -181,7 +181,9 @@ if __name__ == '__main__':
         n += 1
         percent = round(100 * n / len_row, 2)
         art = row[0]
-        mark = row[1]
+        mark = ''
+        if len(row)=2:
+            mark = row[1]
 
         art_list = []
         try:
