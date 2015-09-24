@@ -183,7 +183,7 @@ if __name__ == '__main__':
         art = row[0]
         mark = ''
         if len(row)=2:
-            mark = row[1]
+            mark == row[1]
 
         art_list = []
         try:
